@@ -11,7 +11,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pomodoro',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.white,
+          brightness: Brightness.dark,
+        ),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 38, 65, 79),
       ),
       home: MyHomePage(title: 'Pomodoro'),
     );
@@ -30,29 +35,58 @@ class MyHomePage extends StatelessWidget {
         title: Text(title),
       ),
       body: Center(
-        child: Pomodoro(initialTime: 61),
+        child: Pomodoro(initialTimeFocus: 2, initialTimeChill: 1),
       ),
     );
   }
 }
 
 class Pomodoro extends StatefulWidget {
-  final int initialTime;
+  final int initialTimeFocus;
+  final int initialTimeChill;
 
-  Pomodoro({required this.initialTime});
+  Pomodoro({
+    required this.initialTimeFocus, 
+    required this.initialTimeChill
+  });
 
   @override
   _PomodoroState createState() => _PomodoroState();
 }
 
+enum Mode {
+  focus,
+  chill,
+}
+
 class _PomodoroState extends State<Pomodoro> {
   late int _remainingTime;
+  late int _initialTime;
+  late Mode _mode;
   Timer? _timer;
+
 
   @override
   void initState() {
     super.initState();
-    _remainingTime = widget.initialTime;
+    _mode = Mode.focus;
+    _initialTime = widget.initialTimeFocus;
+    _remainingTime = _initialTime;
+  }
+
+  void _changeMode() {
+    switch (_mode) {
+      case Mode.focus:
+        _mode = Mode.chill;
+        _initialTime = widget.initialTimeChill;
+        _remainingTime = _initialTime;
+        break;
+      case Mode.chill:
+        _mode = Mode.focus;
+        _initialTime = widget.initialTimeFocus;
+        _remainingTime = _initialTime;
+        break;
+    }
   }
 
   void _startTimer() {
@@ -65,6 +99,7 @@ class _PomodoroState extends State<Pomodoro> {
           _remainingTime--;
         } else {
           _timer!.cancel();
+          _changeMode();
         }
       });
     });
@@ -72,7 +107,7 @@ class _PomodoroState extends State<Pomodoro> {
 
   void _resetTimer() {
     setState(() {
-      _remainingTime = widget.initialTime;
+      _remainingTime = _initialTime;
     });
     _startTimer();
   }
