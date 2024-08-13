@@ -23,19 +23,42 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+enum Mode {
+  focus,
+  chill,
+}
+
+const int initialTimeFocus = 4;
+const int initialTimeChill = 2;
+
+class MyHomePage extends StatefulWidget {
   final String title;
 
   MyHomePage({required this.title});
 
   @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  
+  Mode _mode = Mode.focus;
+
+  void toggleMode() {
+    setState(() {
+      _mode = _mode == Mode.focus ? Mode.chill : Mode.focus;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _mode == Mode.focus ? Colors.red : Colors.blue,
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
       ),
       body: Center(
-        child: Pomodoro(initialTimeFocus: 2, initialTimeChill: 1),
+        child: Pomodoro(initialTimeFocus: 2, initialTimeChill: 1, toggleMode: toggleMode),
       ),
     );
   }
@@ -44,19 +67,16 @@ class MyHomePage extends StatelessWidget {
 class Pomodoro extends StatefulWidget {
   final int initialTimeFocus;
   final int initialTimeChill;
+  final Function toggleMode;
 
   Pomodoro({
     required this.initialTimeFocus, 
-    required this.initialTimeChill
+    required this.initialTimeChill,
+    required this.toggleMode,
   });
 
   @override
   _PomodoroState createState() => _PomodoroState();
-}
-
-enum Mode {
-  focus,
-  chill,
 }
 
 class _PomodoroState extends State<Pomodoro> {
@@ -99,6 +119,7 @@ class _PomodoroState extends State<Pomodoro> {
           _remainingTime--;
         } else {
           _timer!.cancel();
+          widget.toggleMode();
           _changeMode();
         }
       });
