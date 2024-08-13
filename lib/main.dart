@@ -1,64 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => PomodoroMode(),
+      child: MyApp()
+    ),
+  );
+}
+
+enum Mode {
+    focus,
+    chill,
+}
+
+class PomodoroMode extends ChangeNotifier {
+  Mode mode = Mode.focus;
+
+  void toggleMode() {
+    mode = mode == Mode.focus ? Mode.chill : Mode.focus;
+    notifyListeners();
+  }
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Pomodoro',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
-          brightness: Brightness.dark,
+    return Consumer<PomodoroMode>(
+      builder: (context, pomodoroMode, child) => MaterialApp(
+        title: 'Pomodoro',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.white,
+            brightness: Brightness.dark,
+          ),
+          scaffoldBackgroundColor: pomodoroMode.mode == Mode.focus ? Colors.red : Colors.blue,
         ),
-        scaffoldBackgroundColor: const Color.fromARGB(255, 38, 65, 79),
+        home: PomodoroPage(title: 'Pomodoro'),
       ),
-      home: MyHomePage(title: 'Pomodoro'),
     );
   }
-}
-
-enum Mode {
-  focus,
-  chill,
 }
 
 const int initialTimeFocus = 4;
 const int initialTimeChill = 2;
 
-class MyHomePage extends StatefulWidget {
+class PomodoroPage extends StatelessWidget {
   final String title;
 
-  MyHomePage({required this.title});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  
-  Mode _mode = Mode.focus;
-
-  void toggleMode() {
-    setState(() {
-      _mode = _mode == Mode.focus ? Mode.chill : Mode.focus;
-    });
-  }
+  PomodoroPage({required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _mode == Mode.focus ? Colors.red : Colors.blue,
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
-        child: Pomodoro(initialTimeFocus: 2, initialTimeChill: 1, toggleMode: toggleMode),
+        child: Pomodoro(initialTimeFocus: 2, initialTimeChill: 1),
       ),
     );
   }
@@ -67,12 +69,10 @@ class _MyHomePageState extends State<MyHomePage> {
 class Pomodoro extends StatefulWidget {
   final int initialTimeFocus;
   final int initialTimeChill;
-  final Function toggleMode;
 
   Pomodoro({
     required this.initialTimeFocus, 
     required this.initialTimeChill,
-    required this.toggleMode,
   });
 
   @override
@@ -119,8 +119,7 @@ class _PomodoroState extends State<Pomodoro> {
           _remainingTime--;
         } else {
           _timer!.cancel();
-          widget.toggleMode();
-          _changeMode();
+          context.read<PomodoroMode>().toggleMode();
         }
       });
     });
