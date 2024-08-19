@@ -19,9 +19,10 @@ enum Mode {
 class PomodoroMode extends ChangeNotifier {
   Mode mode = Mode.focus;
 
-  void toggleMode() {
+  Mode toggleMode() {
     mode = mode == Mode.focus ? Mode.chill : Mode.focus;
     notifyListeners();
+    return mode;
   }
 }
 
@@ -32,12 +33,10 @@ class MyApp extends StatelessWidget {
       builder: (context, pomodoroMode, child) => MaterialApp(
         title: 'Pomodoro',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.white,
-            brightness: Brightness.dark,
-          ),
-          scaffoldBackgroundColor: pomodoroMode.mode == Mode.focus ? Colors.red : Colors.blue,
+            brightness: MediaQuery.platformBrightnessOf(context),
+            seedColor: pomodoroMode.mode == Mode.focus ? Colors.lightBlue : Colors.yellow,
+          )
         ),
         home: PomodoroPage(title: 'Pomodoro'),
       ),
@@ -94,21 +93,6 @@ class _PomodoroState extends State<Pomodoro> {
     _remainingTime = _initialTime;
   }
 
-  void _changeMode() {
-    switch (_mode) {
-      case Mode.focus:
-        _mode = Mode.chill;
-        _initialTime = widget.initialTimeChill;
-        _remainingTime = _initialTime;
-        break;
-      case Mode.chill:
-        _mode = Mode.focus;
-        _initialTime = widget.initialTimeFocus;
-        _remainingTime = _initialTime;
-        break;
-    }
-  }
-
   void _startTimer() {
     if (_timer != null) {
       _timer!.cancel();
@@ -119,7 +103,9 @@ class _PomodoroState extends State<Pomodoro> {
           _remainingTime--;
         } else {
           _timer!.cancel();
-          context.read<PomodoroMode>().toggleMode();
+          Mode currentMode = context.read<PomodoroMode>().toggleMode();
+          _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
+          _remainingTime = _initialTime;
         }
       });
     });
