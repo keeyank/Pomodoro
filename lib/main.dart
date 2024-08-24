@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(
             brightness: MediaQuery.platformBrightnessOf(context),
             seedColor: pomodoroMode.mode == Mode.focus ? Colors.lightBlue : Colors.yellow,
-          )
+          ),
         ),
         home: PomodoroPage(title: 'Pomodoro'),
       ),
@@ -81,14 +81,12 @@ class Pomodoro extends StatefulWidget {
 class _PomodoroState extends State<Pomodoro> {
   late int _remainingTime;
   late int _initialTime;
-  late Mode _mode;
   Timer? _timer;
 
 
   @override
   void initState() {
     super.initState();
-    _mode = Mode.focus;
     _initialTime = widget.initialTimeFocus;
     _remainingTime = _initialTime;
   }
@@ -146,17 +144,34 @@ class _PomodoroState extends State<Pomodoro> {
           style: TextStyle(fontSize: 24),
         ),
         SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _startTimer,
-          child: Text('Start Timer'),
-        ),
-        ElevatedButton(
-          onPressed: _resetTimer,
-          child: Text("Reset Timer"),
-        ),
-        ElevatedButton(
-          onPressed: _pauseTimer,
-          child: Text("Pause Timer"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 64.0,
+              height: 64.0,
+              child: IconButton(
+                icon: Icon(Icons.play_arrow, size: 48.0),
+                onPressed: _startTimer,
+              ),
+            ),
+            SizedBox(
+              width: 64.0,
+              height: 64.0,
+              child: IconButton(
+                icon: Icon(Icons.restart_alt, size: 48.0),
+                onPressed: _resetTimer,
+              ),
+            ),
+            SizedBox(
+              width: 64.0,
+              height: 64.0,
+              child: IconButton(
+                icon: Icon(Icons.pause, size: 48.0),
+                onPressed: _pauseTimer,
+              ),
+            ),
+          ],
         ),
       ],
     );
