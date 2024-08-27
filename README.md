@@ -7,7 +7,7 @@ A productivity app used to focus on tasks and prevent distractions.
 - [X] Add prettier icons
 - [ ] Make time customizable
 - [X] Send a notification / sound-effect when each timer finishes
-- [ ] Merge play / pause button
+- [X] Merge play / pause button
 
 ## Useful Links
 - https://medium.com/front-end-weekly/how-to-test-your-flutter-ios-app-on-your-ios-device-75924bfd75a8

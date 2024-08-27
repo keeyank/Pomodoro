@@ -84,6 +84,8 @@ class _PomodoroState extends State<Pomodoro> {
   late int _initialTime;
   Timer? _timer;
 
+  late bool _isTimerRunning = false;
+
   String get minutes => (_remainingTime ~/ 60).toString().padLeft(2, '0');
   String get seconds => (_remainingTime % 60).toString().padLeft(2, '0');
 
@@ -104,12 +106,16 @@ class _PomodoroState extends State<Pomodoro> {
     if (_timer != null) {
       _timer!.cancel();
     }
+    setState(() {
+      _isTimerRunning = true;
+    });
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_remainingTime > 0) {
           _remainingTime--;
         } else {
           _timer!.cancel();
+          _isTimerRunning = false;
           _playSound();
           Mode currentMode = context.read<PomodoroMode>().toggleMode();
           _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
@@ -128,6 +134,9 @@ class _PomodoroState extends State<Pomodoro> {
 
   void _pauseTimer() {
     _timer!.cancel();
+    setState(() {
+      _isTimerRunning = false;
+    });
   }
 
   @override
@@ -157,16 +166,8 @@ class _PomodoroState extends State<Pomodoro> {
               width: 64.0,
               height: 64.0,
               child: IconButton(
-                icon: Icon(Icons.play_arrow, size: 48.0),
-                onPressed: _startTimer,
-              ),
-            ),
-            SizedBox(
-              width: 64.0,
-              height: 64.0,
-              child: IconButton(
-                icon: Icon(Icons.pause, size: 48.0),
-                onPressed: _pauseTimer,
+                icon: Icon(_isTimerRunning ? Icons.pause : Icons.play_arrow, size: 48.0),
+                onPressed: _isTimerRunning ? _pauseTimer : _startTimer,
               ),
             ),
             SizedBox(
