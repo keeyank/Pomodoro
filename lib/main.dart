@@ -146,6 +146,39 @@ class _PomodoroState extends State<Pomodoro> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 50.0,
+              child: TextField(
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 5.0,
+                      horizontal: 0.0,
+                    ),
+                    border: OutlineInputBorder(),
+                ),
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            Text(':', style: TextStyle(fontSize: 24)),
+            SizedBox(
+              width: 50.0,
+              child: TextField(
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 5.0,
+                      horizontal: 0.0,
+                    ),
+                    border: OutlineInputBorder(),
+                ),
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 20),
         Text(
           formatTime(_remainingTime),
           style: TextStyle(fontSize: 24),
