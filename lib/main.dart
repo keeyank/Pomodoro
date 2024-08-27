@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
 
 void main() {
@@ -83,12 +84,17 @@ class _PomodoroState extends State<Pomodoro> {
   late int _initialTime;
   Timer? _timer;
 
+  final player = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
     _initialTime = widget.initialTimeFocus;
     _remainingTime = _initialTime;
+  }
+
+  Future<void> _playSound() async {
+    await player.play(AssetSource('timer-sound.mp3'));
   }
 
   void _startTimer() {
@@ -101,6 +107,7 @@ class _PomodoroState extends State<Pomodoro> {
           _remainingTime--;
         } else {
           _timer!.cancel();
+          _playSound();
           Mode currentMode = context.read<PomodoroMode>().toggleMode();
           _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
           _remainingTime = _initialTime;
