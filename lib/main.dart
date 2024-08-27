@@ -84,6 +84,9 @@ class _PomodoroState extends State<Pomodoro> {
   late int _initialTime;
   Timer? _timer;
 
+  String get minutes => (_remainingTime ~/ 60).toString().padLeft(2, '0');
+  String get seconds => (_remainingTime % 60).toString().padLeft(2, '0');
+
   final player = AudioPlayer();
 
   @override
@@ -133,55 +136,18 @@ class _PomodoroState extends State<Pomodoro> {
     super.dispose();
   }
 
-  String formatTime(int seconds) {
-    final int minutes = seconds ~/ 60;
-    final int remainingSeconds = seconds % 60;
-    final String formattedMinutes = minutes.toString().padLeft(2, '0');
-    final String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
-    return '$formattedMinutes:$formattedSeconds';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const Row(
+        Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 50.0,
-              child: TextField(
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 5.0,
-                      horizontal: 0.0,
-                    ),
-                    border: OutlineInputBorder(),
-                ),
-                style: TextStyle(fontSize: 24),
-              ),
-            ),
+            Text(minutes, style: TextStyle(fontSize: 24)),
             Text(':', style: TextStyle(fontSize: 24)),
-            SizedBox(
-              width: 50.0,
-              child: TextField(
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 5.0,
-                      horizontal: 0.0,
-                    ),
-                    border: OutlineInputBorder(),
-                ),
-                style: TextStyle(fontSize: 24),
-              ),
-            ),
+            Text(seconds, style: TextStyle(fontSize: 24)),
           ],
-        ),
-        SizedBox(height: 20),
-        Text(
-          formatTime(_remainingTime),
-          style: TextStyle(fontSize: 24),
         ),
         SizedBox(height: 20),
         Row(
@@ -199,16 +165,16 @@ class _PomodoroState extends State<Pomodoro> {
               width: 64.0,
               height: 64.0,
               child: IconButton(
-                icon: Icon(Icons.restart_alt, size: 48.0),
-                onPressed: _resetTimer,
+                icon: Icon(Icons.pause, size: 48.0),
+                onPressed: _pauseTimer,
               ),
             ),
             SizedBox(
               width: 64.0,
               height: 64.0,
               child: IconButton(
-                icon: Icon(Icons.pause, size: 48.0),
-                onPressed: _pauseTimer,
+                icon: Icon(Icons.restart_alt, size: 48.0),
+                onPressed: _resetTimer,
               ),
             ),
           ],
