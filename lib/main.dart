@@ -45,8 +45,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-const int initialTimeFocus = 4;
-const int initialTimeChill = 2;
 
 class PomodoroPage extends StatelessWidget {
   final String title;
