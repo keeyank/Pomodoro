@@ -175,13 +175,17 @@ class _PomodoroState extends State<Pomodoro> {
               child: TextFormField(
                 controller: _minutesController,
                 textAlign: TextAlign.center,
-                // keyboardType: TextInputType.number,
+                keyboardType: TextInputType.number,
                 style: TextStyle(fontSize: 24),
+                readOnly: _isTimerRunning ? true : false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(8),
                 ),
-                onEditingComplete: _updateRemainingTime,
+                onTapOutside: (event) {
+                  _updateRemainingTime();
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
               ),
             ),
             Text(':', style: TextStyle(fontSize: 24)),
@@ -190,13 +194,17 @@ class _PomodoroState extends State<Pomodoro> {
               child: TextFormField(
                 controller: _secondsController,
                 textAlign: TextAlign.center,
-                // keyboardType: TextInputType.number,
+                keyboardType: TextInputType.number,
                 style: TextStyle(fontSize: 24),
+                readOnly: _isTimerRunning ? true : false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.all(8),
                 ),
-                onEditingComplete: _updateRemainingTime,
+                onTapOutside: (event) {
+                  _updateRemainingTime();
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
               ),
             ),
           ],
