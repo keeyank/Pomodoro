@@ -86,8 +86,8 @@ class _PomodoroState extends State<Pomodoro> {
 
   late bool _isTimerRunning = false;
 
-  String get minutes => (_remainingTime ~/ 60).toString().padLeft(2, '0');
-  String get seconds => (_remainingTime % 60).toString().padLeft(2, '0');
+  final TextEditingController _minutesController = TextEditingController();
+  final TextEditingController _secondsController = TextEditingController();
 
   final player = AudioPlayer();
 
@@ -96,6 +96,7 @@ class _PomodoroState extends State<Pomodoro> {
     super.initState();
     _initialTime = widget.initialTimeFocus;
     _remainingTime = _initialTime;
+    _updateTextFields();
   }
 
   Future<void> _playSound() async {
@@ -113,6 +114,7 @@ class _PomodoroState extends State<Pomodoro> {
       setState(() {
         if (_remainingTime > 0) {
           _remainingTime--;
+          _updateTextFields();
         } else {
           _timer!.cancel();
           _isTimerRunning = false;
@@ -120,6 +122,7 @@ class _PomodoroState extends State<Pomodoro> {
           Mode currentMode = context.read<PomodoroMode>().toggleMode();
           _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
           _remainingTime = _initialTime;
+          _updateTextFields();
         }
       });
     });
@@ -139,9 +142,23 @@ class _PomodoroState extends State<Pomodoro> {
     });
   }
 
+  void _updateTextFields() {
+    _minutesController.text = (_remainingTime ~/ 60).toString().padLeft(2, '0');
+    _secondsController.text = (_remainingTime % 60).toString().padLeft(2, '0');
+  }
+
+  void _updateRemainingTime() {
+    int newMinutes = int.tryParse(_minutesController.text) ?? 0;
+    int newSeconds = int.tryParse(_secondsController.text) ?? 0;
+    _remainingTime = newMinutes * 60 + newSeconds;
+    _initialTime = _remainingTime;
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
+    _minutesController.dispose();
+    _secondsController.dispose();
     super.dispose();
   }
 
@@ -153,9 +170,35 @@ class _PomodoroState extends State<Pomodoro> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(minutes, style: TextStyle(fontSize: 24)),
+            SizedBox(
+              width: 60,
+              child: TextFormField(
+                controller: _minutesController,
+                textAlign: TextAlign.center,
+                // keyboardType: TextInputType.number,
+                style: TextStyle(fontSize: 24),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(8),
+                ),
+                onEditingComplete: _updateRemainingTime,
+              ),
+            ),
             Text(':', style: TextStyle(fontSize: 24)),
-            Text(seconds, style: TextStyle(fontSize: 24)),
+            SizedBox(
+              width: 60,
+              child: TextFormField(
+                controller: _secondsController,
+                textAlign: TextAlign.center,
+                // keyboardType: TextInputType.number,
+                style: TextStyle(fontSize: 24),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(8),
+                ),
+                onEditingComplete: _updateRemainingTime,
+              ),
+            ),
           ],
         ),
         SizedBox(height: 20),
