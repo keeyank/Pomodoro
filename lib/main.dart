@@ -38,6 +38,12 @@ class MyApp extends StatelessWidget {
             brightness: MediaQuery.platformBrightnessOf(context),
             seedColor: pomodoroMode.mode == Mode.focus ? Colors.lightBlue : Colors.yellow,
           ),
+          textTheme: const TextTheme(
+            displayLarge: TextStyle(
+              fontSize: 72,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         home: PomodoroPage(title: 'Pomodoro'),
       ),
@@ -170,36 +176,28 @@ class _PomodoroState extends State<Pomodoro> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 60,
+              width: 100,
               child: TextFormField(
                 controller: _minutesController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
-                style: TextStyle(fontSize: 24),
+                style: Theme.of(context).textTheme.displayLarge,
                 readOnly: _isTimerRunning ? true : false,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.all(8),
-                ),
                 onTapOutside: (event) {
                   _updateRemainingTime();
                   FocusManager.instance.primaryFocus?.unfocus();
                 }
               ),
             ),
-            Text(':', style: TextStyle(fontSize: 24)),
+            Text(':', style: Theme.of(context).textTheme.displayLarge),
             SizedBox(
-              width: 60,
+              width: 100,
               child: TextFormField(
                 controller: _secondsController,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
-                style: TextStyle(fontSize: 24),
+                style: Theme.of(context).textTheme.displayLarge,
                 readOnly: _isTimerRunning ? true : false,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.all(8),
-                ),
                 onTapOutside: (event) {
                   _updateRemainingTime();
                   FocusManager.instance.primaryFocus?.unfocus();
