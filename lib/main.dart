@@ -38,12 +38,6 @@ class MyApp extends StatelessWidget {
             brightness: MediaQuery.platformBrightnessOf(context),
             seedColor: pomodoroMode.mode == Mode.focus ? Colors.lightBlue : Colors.yellow,
           ),
-          textTheme: const TextTheme(
-            displayLarge: TextStyle(
-              fontSize: 72,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
         ),
         home: PomodoroPage(title: 'Pomodoro'),
       ),
@@ -63,8 +57,26 @@ class PomodoroPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Center(
-        child: Pomodoro(initialTimeFocus: 2, initialTimeChill: 1),
+      body: Column(
+        children: [
+          Consumer<PomodoroMode>(
+            builder: (context, pomodoroMode, child) => Container(
+              padding: EdgeInsets.all(16.0),
+              width: double.infinity,
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: Text(
+                pomodoroMode.mode == Mode.focus ? 'Focus Time' : 'Break Time',
+                style: Theme.of(context).textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Pomodoro(initialTimeFocus: 1500, initialTimeChill: 300),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -172,6 +184,11 @@ class _PomodoroState extends State<Pomodoro> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        Image.asset(
+          'assets/tomato.png',
+          width: 130,
+          height: 130,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
