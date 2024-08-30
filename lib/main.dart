@@ -129,9 +129,8 @@ class _PomodoroState extends State<Pomodoro> {
   }
 
   void _resetTimer() {
-    setState(() {
-      _remainingTime = _initialTime;
-    });
+    _remainingTime = _initialTime;
+    _updateTextFields();
     _startTimer();
   }
 
@@ -142,7 +141,9 @@ class _PomodoroState extends State<Pomodoro> {
     });
   }
 
-  void _updateTextFields() {
+  // This function unfortunately has to be called everytime we change _remainingTime
+  // I'm sure there's a better way to do this.
+  void _updateTextFields() { 
     _minutesController.text = (_remainingTime ~/ 60).toString().padLeft(2, '0');
     _secondsController.text = (_remainingTime % 60).toString().padLeft(2, '0');
   }
