@@ -211,6 +211,7 @@ class _PomodoroState extends State<Pomodoro> {
                 onTapOutside: (event) {
                   _updateRemainingTime();
                   FocusManager.instance.primaryFocus?.unfocus();
+                  _updateTextFields();
                 }
               ),
             ),
@@ -226,6 +227,7 @@ class _PomodoroState extends State<Pomodoro> {
                 onTapOutside: (event) {
                   _updateRemainingTime();
                   FocusManager.instance.primaryFocus?.unfocus();
+                  _updateTextFields();
                 }
               ),
             ),
