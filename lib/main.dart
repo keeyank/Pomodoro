@@ -139,17 +139,21 @@ class _PomodoroState extends State<Pomodoro> {
           _remainingTime--;
           _updateTextFields();
         } else {
-          _timer!.cancel();
-          _isTimerRunning = false;
+          _changeMode();
           _playSound();
           _vibrate();
-          Mode currentMode = context.read<PomodoroMode>().toggleMode();
-          _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
-          _remainingTime = _initialTime;
-          _updateTextFields();
         }
       });
     });
+  }
+
+  void _changeMode() {
+    _timer!.cancel();
+    _isTimerRunning = false;
+    Mode currentMode = context.read<PomodoroMode>().toggleMode();
+    _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
+    _remainingTime = _initialTime;
+    _updateTextFields();
   }
 
   void _resetTimer() {
@@ -251,6 +255,14 @@ class _PomodoroState extends State<Pomodoro> {
               child: IconButton(
                 icon: Icon(Icons.restart_alt, size: 48.0),
                 onPressed: _resetTimer,
+              ),
+            ),
+            SizedBox(
+              width: 64.0,
+              height: 64.0,
+              child: IconButton(
+                icon: Icon(Icons.skip_next, size: 48.0),
+                onPressed: _changeMode,
               ),
             ),
           ],
