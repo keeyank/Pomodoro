@@ -60,16 +60,33 @@ class PomodoroPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Consumer<PomodoroMode>(
-            builder: (context, pomodoroMode, child) => Container(
-              padding: EdgeInsets.all(16.0),
-              width: double.infinity,
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: Text(
-                pomodoroMode.mode == Mode.focus ? 'Focus Time' : 'Break Time',
-                style: Theme.of(context).textTheme.headlineLarge,
-                textAlign: TextAlign.center,
-              ),
+          Container(
+            padding: EdgeInsets.all(16.0),
+            width: double.infinity,
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Consumer<PomodoroMode>(
+                  builder: (context, pomodoroMode, child) => Text(
+                    pomodoroMode.mode == Mode.focus ? 'Focus Time' : 'Break Time',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  child: IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SettingsPage()),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -148,7 +165,9 @@ class _PomodoroState extends State<Pomodoro> {
   }
 
   void _changeMode() {
-    _timer!.cancel();
+    if (_timer != null) {
+      _timer!.cancel();
+    }
     _isTimerRunning = false;
     Mode currentMode = context.read<PomodoroMode>().toggleMode();
     _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
@@ -268,6 +287,20 @@ class _PomodoroState extends State<Pomodoro> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class SettingsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
+      body: Center(
+        child: Text('Settings page placeholder'),
+      ),
     );
   }
 }
