@@ -20,11 +20,22 @@ enum Mode {
 
 class PomodoroMode extends ChangeNotifier {
   Mode mode = Mode.focus;
+  int focusTime = 25 * 60;  // Default 25 minutes
+  int breakTime = 5 * 60;   // Default 5 minutes
 
-  Mode toggleMode() {
+  int get currentTime {
+    return mode == Mode.focus ? focusTime : breakTime;
+  }
+
+  void toggleMode() {
     mode = mode == Mode.focus ? Mode.chill : Mode.focus;
     notifyListeners();
-    return mode;
+  }
+
+  void updateTimes(int newFocusTime, int newBreakTime) {
+    focusTime = newFocusTime;
+    breakTime = newBreakTime;
+    notifyListeners();
   }
 }
 
@@ -91,7 +102,7 @@ class PomodoroPage extends StatelessWidget {
           ),
           Expanded(
             child: Center(
-              child: Pomodoro(initialTimeFocus: 1500, initialTimeChill: 300),
+              child: Pomodoro(),
             ),
           ),
         ],
@@ -101,13 +112,7 @@ class PomodoroPage extends StatelessWidget {
 }
 
 class Pomodoro extends StatefulWidget {
-  final int initialTimeFocus;
-  final int initialTimeChill;
-
-  Pomodoro({
-    required this.initialTimeFocus, 
-    required this.initialTimeChill,
-  });
+  Pomodoro();
 
   @override
   _PomodoroState createState() => _PomodoroState();
@@ -115,7 +120,6 @@ class Pomodoro extends StatefulWidget {
 
 class _PomodoroState extends State<Pomodoro> {
   late int _remainingTime;
-  late int _initialTime;
   Timer? _timer;
 
   late bool _isTimerRunning = false;
@@ -128,8 +132,12 @@ class _PomodoroState extends State<Pomodoro> {
   @override
   void initState() {
     super.initState();
-    _initialTime = widget.initialTimeFocus;
-    _remainingTime = _initialTime;
+    _updateTimerDuration();
+    _updateTextFields();
+  }
+
+  void _updateTimerDuration() {
+    _remainingTime = Provider.of<PomodoroMode>(context, listen: false).currentTime;
     _updateTextFields();
   }
 
@@ -164,28 +172,24 @@ class _PomodoroState extends State<Pomodoro> {
     });
   }
 
-  void _changeMode() {
-    if (_timer != null) {
-      _timer!.cancel();
-    }
-    _isTimerRunning = false;
-    Mode currentMode = context.read<PomodoroMode>().toggleMode();
-    _initialTime = currentMode == Mode.focus ? widget.initialTimeFocus : widget.initialTimeChill;
-    _remainingTime = _initialTime;
-    _updateTextFields();
-  }
-
-  void _resetTimer() {
-    _remainingTime = _initialTime;
-    _updateTextFields();
-    _startTimer();
-  }
-
-  void _pauseTimer() {
+   void _pauseTimer() {
     _timer!.cancel();
     setState(() {
       _isTimerRunning = false;
     });
+  }
+
+  void _changeMode() {
+    _pauseTimer();
+    context.read<PomodoroMode>().toggleMode();
+    _updateTimerDuration();
+    _updateTextFields();
+  }
+
+  void _resetTimer() {
+    _updateTimerDuration();
+    _updateTextFields();
+    _startTimer();
   }
 
   // This function unfortunately has to be called everytime we change _remainingTime
@@ -199,7 +203,6 @@ class _PomodoroState extends State<Pomodoro> {
     int newMinutes = int.tryParse(_minutesController.text) ?? 0;
     int newSeconds = int.tryParse(_secondsController.text) ?? 0;
     _remainingTime = newMinutes * 60 + newSeconds;
-    _initialTime = _remainingTime;
   }
 
   @override
