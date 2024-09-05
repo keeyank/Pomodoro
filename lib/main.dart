@@ -294,15 +294,89 @@ class _PomodoroState extends State<Pomodoro> {
   }
 }
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _focusTimeController = TextEditingController();
+  final TextEditingController _breakTimeController = TextEditingController();
+
+  String? isValidNum(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a number';
+    }
+    if (int.tryParse(value) == null) {
+      return 'Please enter a valid number';
+    }
+    return null;
+  }
+
+@override
+  void initState() {
+    super.initState();
+    final pomodoroMode = Provider.of<PomodoroMode>(context, listen: false);
+    _focusTimeController.text = pomodoroMode.focusTime.toString();
+    _breakTimeController.text = pomodoroMode.breakTime.toString();
+  }
+
+  @override
+  void dispose() {
+    _focusTimeController.dispose();
+    _breakTimeController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final pomodoroMode = Provider.of<PomodoroMode>(context, listen: false);
+    _focusTimeController.text = (pomodoroMode.focusTime ~/ 60).toString();
+    _breakTimeController.text = (pomodoroMode.breakTime ~/ 60).toString();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
       ),
-      body: Center(
-        child: Text('Settings page placeholder'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _focusTimeController,
+                decoration: InputDecoration(labelText: 'Focus Time (minutes)'),
+                keyboardType: TextInputType.number,
+                validator: isValidNum,
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _breakTimeController,
+                decoration: InputDecoration(labelText: 'Break Time (minutes)'),
+                keyboardType: TextInputType.number,
+                validator: isValidNum,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    int newFocusTime = int.parse(_focusTimeController.text);
+                    int newBreakTime = int.parse(_breakTimeController.text);
+                    Provider.of<PomodoroMode>(context, listen: false).updateTimes(
+                      newFocusTime * 60, 
+                      newBreakTime * 60
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text('Save'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
