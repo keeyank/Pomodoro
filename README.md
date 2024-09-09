@@ -2,6 +2,10 @@
 
 A productivity app used to focus on tasks and prevent distractions. 
 
+My first ever app built using Flutter and Dart, and tested using my iOS.
+
+<img src="Example-Screenshot.png" alt="App Home Page" width="200"/>
+
 ## Features to add
 
 - [X] Add prettier icons
@@ -28,3 +32,11 @@ Now that the functionality is becoming a bit more complex for this simple utilit
 AI has really been helping me build this app so quickly. I'm using Claude, and I'm able to upload my main.dart file, prompt it to add a new UI component (I did this with the banner), and it spits out some good code that I can actually use. Sometimes the code or layout isn't quite what I wanted, so I'll explain this to Claude and it'll correct itself. Throughout all of this, I'm taking extra care to understand everything I use it for - I don't want to let myself get to the point where I'm mindlessly copy pasting the code it provides me with without vetting it and understanding it first. It's a tool to help speed up my workflow, but it still requires an understanding of what the code does along with some minor tweaking of the cod whenever necessary.
 
 I used AI to generate the little tomato logo as well, really nifty!
+
+### Sep 9, 2024
+
+Think I'm about done with this app, it's pretty functional at this point. I think I could have designed things better - there were especially some awkward bits with having the timer duration update whenever changing the settings page - I had to incorporate a RouteAware mixin, and bring in an extra dependency, and I feel like it would have been unnecessary if I designed the app a bit better.
+
+AI has of course been such a momentous help to me, but there's a danger of using it as a crutch and having a hollow understanding of what the program is actually doing. I'm currently of the opinion that it is a great timesaver and allows you to develop at a much faster pace, but should be used cautiously, and you should never copy-paste without understanding what the code does. This, of course, applies to stack overflow as much as it does AI. I've really been using AI as a shorthand way to google things, but with the tradeoff of less ability to scrutinize the source.
+
+ Next up, figuring out how to ship this thing on iOS and Android!
