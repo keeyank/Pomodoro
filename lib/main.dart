@@ -18,6 +18,8 @@ enum Mode {
     chill,
 }
 
+final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
+
 class PomodoroMode extends ChangeNotifier {
   Mode mode = Mode.focus;
   int focusTime = 25 * 60;  // Default 25 minutes
@@ -51,6 +53,7 @@ class MyApp extends StatelessWidget {
             seedColor: pomodoroMode.mode == Mode.focus ? Colors.lightBlue : Colors.yellow,
           ),
         ),
+        navigatorObservers: [routeObserver],
         home: PomodoroPage(title: 'Pomodoro'),
       ),
     );
@@ -118,7 +121,7 @@ class Pomodoro extends StatefulWidget {
   _PomodoroState createState() => _PomodoroState();
 }
 
-class _PomodoroState extends State<Pomodoro> {
+class _PomodoroState extends State<Pomodoro> with RouteAware {
   late int _remainingTime;
   Timer? _timer;
 
@@ -134,6 +137,20 @@ class _PomodoroState extends State<Pomodoro> {
     super.initState();
     _updateTimerDuration();
     _updateTextFields();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    if (!_isTimerRunning && _remainingTime % 60 == 0) {
+      _updateTimerDuration();
+    }
   }
 
   void _updateTimerDuration() {
@@ -173,7 +190,9 @@ class _PomodoroState extends State<Pomodoro> {
   }
 
    void _pauseTimer() {
-    _timer!.cancel();
+    if (_timer != null) {
+      _timer!.cancel();   
+    }
     setState(() {
       _isTimerRunning = false;
     });
@@ -183,12 +202,10 @@ class _PomodoroState extends State<Pomodoro> {
     _pauseTimer();
     context.read<PomodoroMode>().toggleMode();
     _updateTimerDuration();
-    _updateTextFields();
   }
 
   void _resetTimer() {
     _updateTimerDuration();
-    _updateTextFields();
     _startTimer();
   }
 
