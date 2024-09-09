@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:vibration/vibration.dart';
@@ -251,6 +252,10 @@ class _PomodoroState extends State<Pomodoro> with RouteAware {
                 keyboardType: TextInputType.number,
                 style: Theme.of(context).textTheme.displayLarge,
                 readOnly: _isTimerRunning ? true : false,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(2),
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 onTapOutside: (event) {
                   _updateRemainingTime();
                   FocusManager.instance.primaryFocus?.unfocus();
@@ -267,6 +272,10 @@ class _PomodoroState extends State<Pomodoro> with RouteAware {
                 keyboardType: TextInputType.number,
                 style: Theme.of(context).textTheme.displayLarge,
                 readOnly: _isTimerRunning ? true : false,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(2),
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 onTapOutside: (event) {
                   _updateRemainingTime();
                   FocusManager.instance.primaryFocus?.unfocus();
