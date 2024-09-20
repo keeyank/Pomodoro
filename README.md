@@ -1,3 +1,7 @@
+# Privacy Policy
+
+This app does not track any data. The app is purely built and ran on the devices, with 0 server-side processing or storing of data.
+
 # Pomodoro
 
 A productivity app used to focus on tasks and prevent distractions. 
